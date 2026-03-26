@@ -1,85 +1,100 @@
 ---
-name: dp-api
-description: Use the Deconstructed Papers API via the Python CLI to parse papers and create shared links
+name: deconstructed-papers
+description: Parse papers and generate Deconstructed Papers share links using the bundled Python CLI and Deconstructed Papers API. Use when the user wants to turn arXiv/PDF URLs into structured paper output or public share links, especially for batch paper workflows, arXiv discovery pipelines, or automated publishing flows.
 ---
 
-# Deconstructed Papers API — Python CLI
+# Deconstructed Papers API
 
-Use this skill when the user wants to parse papers, create shared links, or manage API keys via the Deconstructed Papers API.
+Use this skill to parse papers and create share links via Deconstructed Papers.
 
-For full API endpoint documentation (request/response schemas, error codes, rate limits, curl examples), see https://www.deconstructedpapers.com/docs
+## What it does
 
-## Setup
+- Parse a paper URL into structured sections
+- Create a shareable Deconstructed Papers link
+- Batch process multiple paper URLs
+- Manage API keys when explicitly asked
 
-```bash
-curl -O https://raw.githubusercontent.com/nighthawk6389/deconstructed-papers-skill/main/auto-share.py
-pip install requests
-export DP_API_KEY="dp_live_..."
-```
+## Authentication
 
-API keys are created in the web app at **Settings → API Keys**. The key is shown once — save it immediately.
+The API key is expected in one of these ways:
 
-## CLI Reference
+- `DP_API_KEY` environment variable
+- `--api-key` CLI flag
 
-The CLI is a single-file script: [`auto-share.py`](https://github.com/nighthawk6389/deconstructed-papers-skill/blob/main/auto-share.py)
+In this workspace, the key may already exist in:
 
-### Parse Papers
+- `/home/javaiye/.openclaw/workspace/.env`
 
-Returns structured paper data (title, authors, sections with LaTeX). Costs 1 credit per fresh parse; cached results are free.
-
-```bash
-# Parse a single paper
-python auto-share.py parse https://arxiv.org/abs/1706.03762
-
-# Parse with a specific model
-python auto-share.py parse --model anthropic/claude-sonnet-4.6 URL
-
-# Raw JSON output (for piping to jq, etc.)
-python auto-share.py parse --json URL
-
-# Quiet mode — titles only
-python auto-share.py parse -q URL1 URL2
-```
-
-### Create Shared Links
-
-Parses the paper and generates a shareable URL in one step.
+If needed before running the script:
 
 ```bash
-# Share a single paper
-python auto-share.py share https://arxiv.org/abs/1706.03762
-
-# Batch share
-python auto-share.py share URL1 URL2 URL3
-
-# Quiet mode — URLs only (useful for scripting)
-python auto-share.py share -q URL1 URL2
+source /home/javaiye/.openclaw/workspace/.env
 ```
 
-### Manage API Keys
+## Script
+
+Use the bundled script:
 
 ```bash
-python auto-share.py keys list
-python auto-share.py keys create --name "my-bot"
-python auto-share.py keys revoke KEY_UUID
+python3 /home/javaiye/.openclaw/workspace/skills/deconstructed-papers/scripts/auto-share.py ...
 ```
 
-### Global Options
+## Common usage
 
-| Flag | Env Var | Description |
-|------|---------|-------------|
-| `--api-key` | `DP_API_KEY` | API key for all commands |
-| `--base-url` | `DP_BASE_URL` | Override base URL (default: `https://www.deconstructedpapers.com`) |
-
-### Local Development
+### Parse one paper
 
 ```bash
-python auto-share.py --base-url http://localhost:3000 parse URL
+source /home/javaiye/.openclaw/workspace/.env
+python3 /home/javaiye/.openclaw/workspace/skills/deconstructed-papers/scripts/auto-share.py parse https://arxiv.org/abs/1706.03762
 ```
 
-## Key Behaviors
+### Parse with JSON output
 
-- **Caching**: Same URL + same user = cache hit. No credit deducted.
-- **arXiv normalization**: `/abs/` URLs auto-convert to `/pdf/`.
-- **Retries**: The CLI retries up to 3 times on network errors, 5xx, and 429s with exponential backoff.
-- **Default model**: `anthropic/claude-haiku-4.5` (fast, cost-effective).
+```bash
+source /home/javaiye/.openclaw/workspace/.env
+python3 /home/javaiye/.openclaw/workspace/skills/deconstructed-papers/scripts/auto-share.py parse --json https://arxiv.org/abs/1706.03762
+```
+
+### Share one paper
+
+```bash
+source /home/javaiye/.openclaw/workspace/.env
+python3 /home/javaiye/.openclaw/workspace/skills/deconstructed-papers/scripts/auto-share.py share https://arxiv.org/abs/1706.03762
+```
+
+### Batch share
+
+```bash
+source /home/javaiye/.openclaw/workspace/.env
+python3 /home/javaiye/.openclaw/workspace/skills/deconstructed-papers/scripts/auto-share.py share URL1 URL2 URL3
+```
+
+### Quiet mode for pipelines
+
+```bash
+source /home/javaiye/.openclaw/workspace/.env
+python3 /home/javaiye/.openclaw/workspace/skills/deconstructed-papers/scripts/auto-share.py share -q URL1 URL2
+```
+
+## Notes
+
+- arXiv `/abs/` URLs are normalized to `/pdf/` by the CLI.
+- Cached papers do not consume fresh parse credits.
+- The script retries transient failures and rate limits.
+- Default model is `anthropic/claude-haiku-4.5` unless overridden.
+
+## Key management
+
+Only use key-management commands when the user explicitly asks:
+
+```bash
+python3 /home/javaiye/.openclaw/workspace/skills/deconstructed-papers/scripts/auto-share.py keys list
+python3 /home/javaiye/.openclaw/workspace/skills/deconstructed-papers/scripts/auto-share.py keys create --name "my-bot"
+python3 /home/javaiye/.openclaw/workspace/skills/deconstructed-papers/scripts/auto-share.py keys revoke KEY_UUID
+```
+
+## Reference docs
+
+For full API documentation:
+
+- https://www.deconstructedpapers.com/docs
