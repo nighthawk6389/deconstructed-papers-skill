@@ -7,11 +7,12 @@ description: Use the Deconstructed Papers API via the Python CLI to parse papers
 
 Use this skill when the user wants to parse papers, create shared links, or manage API keys via the Deconstructed Papers API.
 
-For full API endpoint documentation (request/response schemas, error codes, rate limits, curl examples), see `docs/api-usage.md`.
+For full API endpoint documentation (request/response schemas, error codes, rate limits, curl examples), see https://www.deconstructedpapers.com/docs
 
 ## Setup
 
 ```bash
+curl -O https://raw.githubusercontent.com/nighthawk6389/deconstructed-papers-skill/main/auto-share.py
 pip install requests
 export DP_API_KEY="dp_live_..."
 ```
@@ -20,7 +21,7 @@ API keys are created in the web app at **Settings → API Keys**. The key is sho
 
 ## CLI Reference
 
-The CLI lives at `scripts/auto-share.py`.
+The CLI is a single-file script: [`auto-share.py`](https://github.com/nighthawk6389/deconstructed-papers-skill/blob/main/auto-share.py)
 
 ### Parse Papers
 
@@ -28,16 +29,16 @@ Returns structured paper data (title, authors, sections with LaTeX). Costs 1 cre
 
 ```bash
 # Parse a single paper
-python scripts/auto-share.py parse https://arxiv.org/abs/1706.03762
+python auto-share.py parse https://arxiv.org/abs/1706.03762
 
 # Parse with a specific model
-python scripts/auto-share.py parse --model anthropic/claude-sonnet-4.6 URL
+python auto-share.py parse --model anthropic/claude-sonnet-4.6 URL
 
 # Raw JSON output (for piping to jq, etc.)
-python scripts/auto-share.py parse --json URL
+python auto-share.py parse --json URL
 
 # Quiet mode — titles only
-python scripts/auto-share.py parse -q URL1 URL2
+python auto-share.py parse -q URL1 URL2
 ```
 
 ### Create Shared Links
@@ -46,21 +47,21 @@ Parses the paper and generates a shareable URL in one step.
 
 ```bash
 # Share a single paper
-python scripts/auto-share.py share https://arxiv.org/abs/1706.03762
+python auto-share.py share https://arxiv.org/abs/1706.03762
 
 # Batch share
-python scripts/auto-share.py share URL1 URL2 URL3
+python auto-share.py share URL1 URL2 URL3
 
 # Quiet mode — URLs only (useful for scripting)
-python scripts/auto-share.py share -q URL1 URL2
+python auto-share.py share -q URL1 URL2
 ```
 
 ### Manage API Keys
 
 ```bash
-python scripts/auto-share.py keys list
-python scripts/auto-share.py keys create --name "my-bot"
-python scripts/auto-share.py keys revoke KEY_UUID
+python auto-share.py keys list
+python auto-share.py keys create --name "my-bot"
+python auto-share.py keys revoke KEY_UUID
 ```
 
 ### Global Options
@@ -73,7 +74,7 @@ python scripts/auto-share.py keys revoke KEY_UUID
 ### Local Development
 
 ```bash
-python scripts/auto-share.py --base-url http://localhost:3000 parse URL
+python auto-share.py --base-url http://localhost:3000 parse URL
 ```
 
 ## Key Behaviors
