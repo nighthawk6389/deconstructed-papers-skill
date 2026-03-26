@@ -183,9 +183,12 @@ Shared papers are publicly viewable at `/s/{shortCode}` — no authentication re
 
 ## Python CLI
 
-A Python CLI tool is available. Usage:
+A Python CLI tool is available at: https://github.com/nighthawk6389/deconstructed-papers-skill
+
+Download: https://raw.githubusercontent.com/nighthawk6389/deconstructed-papers-skill/main/auto-share.py
 
 ```bash
+curl -O https://raw.githubusercontent.com/nighthawk6389/deconstructed-papers-skill/main/auto-share.py
 pip install requests
 export DP_API_KEY="dp_live_..."
 
